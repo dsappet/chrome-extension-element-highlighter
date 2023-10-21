@@ -1,0 +1,41 @@
+.custom-border-box {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-border-box::before {
+  content: attr(data-tooltip); /* Use data-tooltip attribute for the text */
+  position: absolute;
+  top: -30px; /* Adjust top position as needed */
+  left: 0; /* Adjust left position as needed */
+  width: 100%;
+  text-align: center; /* Center text horizontally */
+  background-color: rgba(0, 123, 255, 0.8); /* Background color and opacity */
+  color: #fff; /* Text color */
+  padding: 5px; /* Adjust padding as needed */
+  border-radius: 4px;
+  z-index: 1; /* Ensure it appears above other elements */
+  pointer-events: none;
+}
+
+.OLDcustom-border-box {
+  position: relative; /* Required for positioning pseudo-elements */
+  display: inline-block; /* Keeps the border-box from taking up the full width */
+
+  /* Style the border-like box */
+  padding: 4px; /* Adjust padding as needed */
+  border: 2px solid #007bff; /* Border style and color */
+  border-radius: 4px; /* Rounded corners, adjust as needed */
+}
+
+.OLDcustom-border-box::before {
+  content: ''; /* Required for pseudo-element */
+  position: absolute; /* Position it relative to the parent */
+  top: -8px; /* Adjust top position as needed */
+  left: -8px; /* Adjust left position as needed */
+  width: calc(100% + 16px); /* Adjust width to cover the border */
+  height: calc(100% + 16px); /* Adjust height to cover the border */
+  border: 2px solid #007bff; /* Same border style and color as parent */
+  border-radius: 6px; /* Slightly larger radius to overlap the corners */
+  pointer-events: none; /* Allows interactions with the element underneath */
+}
