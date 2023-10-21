@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Element Highlighter",
+  "version": "1.0",
+  "description": "Highlight available elements on a page",
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "icons/hello-128.png"
+  },
+  "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "css": ["scripts/content.css"],
+      "matches": [
+        "https://*.meltwater.net/*",
+        "https://app.meltwater.com/*"
+      ]
+    }
+  ]
+}
