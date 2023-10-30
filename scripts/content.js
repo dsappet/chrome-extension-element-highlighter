@@ -1,23 +1,92 @@
 console.log('my chrome extension is running!');
 
+function isElementWithinShadowDOM(element) {
+  let parent = element.parentElement;
+
+  while (parent) {
+    if (parent.shadowRoot) {
+      return true; // Element is within a Shadow DOM
+    }
+    parent = parent.parentElement;
+  }
+
+  return false; // Element is not within a Shadow DOM
+}
+
+function getParentShadowDOM(element) {
+  let parent = element.parentElement;
+
+  while (parent) {
+    if (parent.shadowRoot) {
+      return parent.shadowRoot; // Element is within a Shadow DOM
+    }
+    parent = parent.parentElement;
+  }
+
+  return; // Element is not within a Shadow DOM
+}
+
+function addClassToShadowRoot(shadowRoot) {
+  // Define a custom CSS property
+  const style = document.createElement('style');
+  style.textContent = `
+  .custom-border-box {
+      
+      line-height: 2; /* ?? */
+      display: block; /* Show by default */
+      content: attr(data-tooltip); /* Use data-tooltip attribute for the text */
+      position: absolute;
+      /*top: 0; */ /* Adjust top position as needed */
+      left: 0; /* Adjust left position as needed */
+      width: 100%;
+      /* height: 100%; */
+      text-align: center; /* Center text horizontally */
+      /* background-color: rgba(0, 123, 255, 0.8); */ /* Background color and opacity */
+      color: #fff; /* Text color */
+      border: 1px solid #007bff;
+      box-sizing: border-box;
+      border-radius: 4px;
+    padding: 5px; /* Adjust padding as needed */
+    z-index: 9999; /* Ensure it appears above other elements */
+    pointer-events: none;
+  }
+  `;
+
+  shadowRoot.appendChild(style);
+}
+
 // Function to create the border-like box
 function createOrUpdateBorderBox(element, text) {
-  // Check if the element already has a border box
-  const existingBorderBox = element.querySelector('.custom-border-box');
-  
-  if (existingBorderBox) {
-    // If it exists, update its content
-    existingBorderBox.innerHTML = text;
-  } else {
-    // If it doesn't exist, create a new one
-    const borderBox = document.createElement('div');
-    element.setAttribute('data-tooltip', text);
-    borderBox.classList.add('custom-border-box');
-    // borderBox.innerHTML = text;
 
-    // Append the border-box to the element
-    element.appendChild(borderBox);
+  // element.style.border = '2px solid red'; // Customize the border style as needed
+  // if(element.style.border )
+  // element.style.boxSizing = 'border-box';
+
+  // The :scope > part of this selector is important to avoid selecting nested elements
+  // It causes only direct children to be queried, which is what we want
+  if (element.querySelector(':scope > .custom-border-box')) {
+    // Already has a child with custom-border-box class
+    // Update the text
+    element.querySelector(':scope > .custom-border-box').setAttribute('data-tooltip', text);
+    return;
   }
+
+  const parentShadow = getParentShadowDOM(element);
+  if (parentShadow) {
+    // add custom-border-box class to encapsulated styles
+    addClassToShadowRoot(parentShadow);
+  }
+
+  // If it doesn't exist, create a new one
+  const borderBox = document.createElement('div');
+  // borderBox.innerText = text;
+  borderBox.setAttribute('data-tooltip', text);
+  borderBox.classList.add('custom-border-box');
+  borderBox.style.width = window.getComputedStyle(element).width;
+  borderBox.style.height = window.getComputedStyle(element).height;
+
+  element.appendChild(borderBox);
+
 }
 
 
@@ -27,7 +96,7 @@ function searchShadowDOMRecursively(element, attributeName) {
     // Add your code to handle the element here
     // el.style.border = '2px solid red'; // Customize the border style as needed
     const text = el.getAttribute(attributeName);
-      createOrUpdateBorderBox(el, text);
+    createOrUpdateBorderBox(el, text);
   });
   // Check if the element has a Shadow Root
   if (element.shadowRoot) {
@@ -45,11 +114,11 @@ function searchShadowDOMRecursively(element, attributeName) {
     });
 
     // Recursively search the children of the shadow dom  element
-  shadowRoot.childNodes.forEach((child) => {
-    if (child instanceof HTMLElement) {
-      searchShadowDOMRecursively(child, attributeName);
-    }
-  });
+    shadowRoot.childNodes.forEach((child) => {
+      if (child instanceof HTMLElement) {
+        searchShadowDOMRecursively(child, attributeName);
+      }
+    });
   }
 
   // Recursively search the children of the current element
