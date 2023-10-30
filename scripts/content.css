@@ -1,9 +1,24 @@
 .custom-border-box {
-  position: relative;
-  display: inline-block;
+  line-height: 2; /* ?? */
+      display: block; /* Show by default */
+      content: attr(data-tooltip); /* Use data-tooltip attribute for the text */
+      position: absolute;
+      /*top: 0; */ /* Adjust top position as needed */
+      left: 0; /* Adjust left position as needed */
+      width: 100%;
+      /* height: 100%; */
+      text-align: center; /* Center text horizontally */
+      /* background-color: rgba(0, 123, 255, 0.8); */ /* Background color and opacity */
+      color: #fff; /* Text color */
+      border: 1px solid #007bff;
+      box-sizing: border-box;
+      border-radius: 4px;
+    padding: 5px; /* Adjust padding as needed */
+    z-index: 9999; /* Ensure it appears above other elements */
+    pointer-events: none;
 }
 
-.custom-border-box::before {
+.SKIPcustom-border-box { /* Tooltip container ::before */
   content: attr(data-tooltip); /* Use data-tooltip attribute for the text */
   position: absolute;
   top: -30px; /* Adjust top position as needed */
